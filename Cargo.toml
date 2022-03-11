@@ -31,9 +31,7 @@ ark-ff = "0.3.0"
 ark-poly = "0.3.0"
 ark-bls12-381 = "0.3.0"
 ark-std = "0.3.0"
-# Some version issue for ark-ec. If we use (ark-ec="0.3.0"), we are actually using some old 2018 version.
-ark-ec = {version = "0.3.0", git="https://github.com/arkworks-rs/algebra"}
-# ark-ec = "0.3.0"
+ark-ec = "0.3.0"
 ark-poly-commit = { version = "0.3", default-features = false, optional=true }
 ark-serialize = { version = "0.3.0", optional = true, default-features = false, features = ["derive"] }
 
