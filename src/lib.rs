@@ -7,30 +7,6 @@ pub mod pairing;
 
 use wasm_bindgen::prelude::*;
 
-//#[wasm_bindgen]
-//extern {
-//    pub fn alert(s: &str);
-//}
-
-// #[wasm_bindgen]
-// pub fn fibonacci(n: u64) -> u64 {
-//     match n {
-//         0 => 0,
-//         1 => 1,
-//         x => fibonacci(x - 1) + fibonacci(x - 2),
-//     }
-// }
-
-// #[wasm_bindgen]
-// pub fn pedersen_prove() {
-//     prover::pedersen_prover();
-// }
-
-// #[wasm_bindgen]
-// pub fn blake_prove() {
-//     prover::blake_prover();
-// }
-
 #[wasm_bindgen]
 pub fn bench_fft_and_ifft() {
     let input_domain_dim = 20;
@@ -38,4 +14,18 @@ pub fn bench_fft_and_ifft() {
     let (rand_evaluation_domain, output_domain) = fft::generate_random_evaluation(input_domain_dim, output_domain_dim);
 
     fft::compute_fft_and_ifft(rand_evaluation_domain.clone(), output_domain);
+}
+
+#[wasm_bindgen]
+pub fn bench_msm() {
+    let size = 1<<14;
+    let (point_vec, scalar_vec) = msm::generate_msm_inputs(size);
+    msm::compute_msm(point_vec, scalar_vec);
+}
+
+#[wasm_bindgen]
+pub fn bench_pairing() {
+    let size = 1<<2;
+    let (g1_rand_vec, g2_rand_vec) = pairing::generate_pairing_inputs(size);
+    pairing::compute_billinearity(g1_rand_vec, g2_rand_vec);
 }

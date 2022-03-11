@@ -1,4 +1,4 @@
-import { bench_fft_and_ifft } from "wasm-prover";
+import { bench_fft_and_ifft, bench_msm, bench_pairing } from "wasm-prover";
 
 const pre = document.getElementById("wasm-prover");
 
@@ -10,12 +10,11 @@ const median = arr => {
   };
 
 const repeat = 5;
-const input = 27;
 const perf = Array.from(
     {length: repeat},
     (_, i) => {
         const t0 = performance.now();
-        bench_fft_and_ifft();
+        bench_msm();
         const t1 = performance.now();
         return t1 - t0;
     }
