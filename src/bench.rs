@@ -3,7 +3,7 @@ extern crate test;
 #[cfg(test)]
 mod tests{
     use crate::fft::{generate_random_evaluation, compute_fft_and_ifft};
-
+    use ark_bls12_381::G1Affine;
     use super::*;
     use test::Bencher;
 
@@ -17,4 +17,12 @@ mod tests{
             compute_fft_and_ifft(rand_evaluation_domain.clone(), output_domain);
         });
     }
+
+
+    // #[bench]
+    // fn bench_msm(b: &mut Bencher) {
+    //     b.iter( || {
+    //         // test_var_base_msm::<G1Affine>();
+    //     });
+    // }
 }

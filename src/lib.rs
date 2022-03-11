@@ -2,6 +2,8 @@
 
 mod bench;
 pub mod fft;
+pub mod msm;
+pub mod pairing;
 
 use wasm_bindgen::prelude::*;
 
