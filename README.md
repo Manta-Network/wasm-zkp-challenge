@@ -1,87 +1,53 @@
 # `WASM` Z-prize challenge proposal (Draft)
 
+## Introduction
+WASM (WebAssembly) is the de-facto standard for smart contact VM like Polkadot, Definity, Cosmos. And also critical for wallet adoption. However, making ZKP works efficiently on WASM is still a challenge today. In Manta’s internal benchmark, we can observe 10x - 15x performance penalty on WASM compared with X86 native binary. This WASM ZKP challenge is bring breakthroughs in compilation to make ZKP on WASM (both prover and verifier)
 
-Authors: Tom Shen (UCB/Manta), Shumo Chu (Manta)
+Goal: Test the correctness and performance of WASM binaries on some operations that are common in ZKP systems.
 
-WASM (WebAssembly) is the de-facto standard for smart contact VM like Polkadot, Definity, Cosmos. And also critical for wallet adoption. However, making ZKP works efficiently on WASM is still a challenge today. In Manta’s internal benchmark, we can observe 10x - 15x performance penalty on WASM compared with X86 native binary. This WASM ZKP challenge is bring breakthroughs in compilation to make ZKP on WASM (both prover and verifier) 
+(Note: Bls12-381 can be replaced with any ZK friendly curves)
 
-**Goal:** Test the correctness and performance of WASM binaries on some operations that are common in ZKP systems. 
+In particular, we consider three types of test suites:
+* Low-Degree Extension: Measure the performance of (I)FFT
+* Product of Pairings: Measure the performance of billinear pairing
+* Multi-Scalar Multiplication: Measure the performance of scalar multiplication
 
-(Note: *Bls12-381* can be replaced with any ZK friendly curves)
+Please check detailed documents at our [proposal](https://hackmd.io/@tsunrise/rJ5yqr4Z5/edit).
 
-### Setting up the benchmark
+## Dependencies:
+* [Rust toolchain](https://www.rust-lang.org/tools/install)
+* [npm](https://www.npmjs.com/get-npm)
+* `wasm-pack` package:
+    ```bash
+    cargo install wasm-pack
+    ```
 
-**Input:** 
+## Run the benchmark
+* WASM time:
+    ```bash
+    ./serve.sh
+    ```
+    You can view the result at `localhost:8080`.
+    Please update [this line](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/www/index.js#L17) to benchmark different test suites.
+    The input vector length could also be updated for [Low-Degree Extension](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/src/lib.rs#L12), [Product of Pairings](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/src/lib.rs#L28), and [Multi-Scalar Multiplication](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/src/lib.rs#L21).
+* Native time:
+    ```bash
+    cargo bench
+    ```
 
-- <img src="https://render.githubusercontent.com/render/math?math=P_u">: user’s wasm binary
-- <img src="https://render.githubusercontent.com/render/math?math=P_b">: baseline wasm binary compiled from rust toolchain
-- <img src="https://render.githubusercontent.com/render/math?math=d \in [0,1)">: difficulty
-1. We prepare some randomized input. 
-2. Run <img src="https://render.githubusercontent.com/render/math?math=P_u">, and put prepared input to stdin. 
-3. Repeat the last step multiple times (TODO). Measure the average runtime <img src="https://render.githubusercontent.com/render/math?math=T_u"> and record the output <img src="https://render.githubusercontent.com/render/math?math=S_u">. 
-4. Run <img src="https://render.githubusercontent.com/render/math?math=P_b">, and put prepared input to stdin.
-5. Repeat the last step multiple times. Measure the average runtime <img src="https://render.githubusercontent.com/render/math?math=T_b"> and record the output <img src="https://render.githubusercontent.com/render/math?math=S_b">. 
-6. Accept if <img src="https://render.githubusercontent.com/render/math?math=S_u = S_b"> and <img src="https://render.githubusercontent.com/render/math?math=T_u \le (1 - d) T_b">
+## Initial Results
 
-## Test Suite 1: Low-degree extension
+### Platform
+Intel i7-6560U CPU @ 2.2GHz, 8GB Memory, Linux 16.04 LTS.
 
-This test measures the performance of (I)FFT. 
+### FFT Results
 
-**Test Field: Bls12-381-Fr**
 
-**Input:** 
 
-- Smaller Radix-2 domain <img src="https://render.githubusercontent.com/render/math?math=D_1"> with generator <img src="https://render.githubusercontent.com/render/math?math=g_1">
-- Larger Radix-2 domain <img src="https://render.githubusercontent.com/render/math?math=D_2"> with generator <img src="https://render.githubusercontent.com/render/math?math=g_2">
-- random vector <img src="https://render.githubusercontent.com/render/math?math=\vec{v_1}"> of length <img src="https://render.githubusercontent.com/render/math?math=|D_1|">, interpreted as the evaluation of a polynomial <img src="https://render.githubusercontent.com/render/math?math=p"> on <img src="https://render.githubusercontent.com/render/math?math=D_1">.
+### MSM Results
 
-**Output:** 
+### Pairing Results
 
-vector <img src="https://render.githubusercontent.com/render/math?math=\vec{v_2}"> of length <img src="https://render.githubusercontent.com/render/math?math=|D_2|"> such that <img src="https://render.githubusercontent.com/render/math?math=\vec{v_2}"> is the evaluation of <img src="https://render.githubusercontent.com/render/math?math=p"> on <img src="https://render.githubusercontent.com/render/math?math=D_2">. 
 
-**Analysis:** 
 
-A common wasm binary will need one IFFT to get coefficients of <img src="https://render.githubusercontent.com/render/math?math=p"> and one FFT to evaluate <img src="https://render.githubusercontent.com/render/math?math=p"> on <img src="https://render.githubusercontent.com/render/math?math=D_2">
-
-## Test Suite 2: Product of Pairings
-
-This test measures the performance of bilinear pairing. 
-
-**Test Curve: Bls12-381** as <img src="https://render.githubusercontent.com/render/math?math=(G_1, G_2)">
-
-**Input:**
-
-- <img src="https://render.githubusercontent.com/render/math?math=\vec{v}_1">: Random vector of affine representation of <img src="https://render.githubusercontent.com/render/math?math=G_1">. 
-- <img src="https://render.githubusercontent.com/render/math?math=\vec{v}_2">: Random vector of affine representation of <img src="https://render.githubusercontent.com/render/math?math=G_2">.
-
-We sample <img src="https://render.githubusercontent.com/render/math?math=\vec{v}_1">, <img src="https://render.githubusercontent.com/render/math?math=\vec{v}_2"> by taking random exponent on affine generation. Sampling is not included in benchmark time. Exponents will not be given. 
-
-**Output:**
-
-<img src="https://render.githubusercontent.com/render/math?math=x\in G_T"> such that
-          
-<img src="https://render.githubusercontent.com/render/math?math=x = \prod_{(P, Q)\in\mbox{zip}(\vec{v}_1, \vec{v}_2)} e(P,Q)">          
-
-**Analysis:**
-
-This operation requires computation of product of pairings. 
-
-## Test Suite 3: Multi-Scalar Multiplication
-
-This test measures the performance of scalar multiplication. 
-
-**Test Curve: Bls12-381** as <img src="https://render.githubusercontent.com/render/math?math=(G_1, G_2, \mathbb{F}_r)"> 
-
-**Input:**
-
-- <img src="https://render.githubusercontent.com/render/math?math=\vec{v}">: Random vector of <img src="https://render.githubusercontent.com/render/math?math=G_1">.  
-- <img src="https://render.githubusercontent.com/render/math?math=\vec{s}">: Random vector of <img src="https://render.githubusercontent.com/render/math?math=\mathbb{F}_r">. 
-
-**Output:**
-
-<img src="https://render.githubusercontent.com/render/math?math=x = \sum_{(P, s)\in\mbox{zip}(\vec{v}, \vec{s})}sP">
-
-**Analysis:**
-
-This operation requires computation of <img src="https://render.githubusercontent.com/render/math?math=|\vec{v}|"> scalar multiplication. 
 
