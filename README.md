@@ -42,12 +42,36 @@ Intel i7-6560U CPU @ 2.2GHz, 8GB Memory, Linux 16.04 LTS.
 
 ### FFT Results
 
+|Input Vecotr Length | Output Vector Length | WASM (ms) | Native (ms) | Ratio |
+| --- | --- | --- | --- | --- |
+| 2^14 | 2^15 | 111 | 18 | 6.2 |
+| 2^16 | 2^17 | 496 | 86 | 5.8 |
+| 2^18 | 2^19 | 2373 | 450 | 5.3 |
+| 2^20 | 2^21 | 9912 | 2118 | 4.7 |
 
+We note that, for the same input vector length, the output vector length also has impact over the latency. Please see below:
+
+|Input Vecotr Length | Output Vector Length | WASM (ms) | Native (ms) | Ratio |
+| --- | --- | --- | --- | --- |
+| 2^14 | 2^15 | 111 | 18 | 6.2 |
+| 2^14 | 2^16 | 190 | 32 | 5.9 |
+| 2^14 | 2^17 | 358 | 62 | 5.8 |
+| 2^14 | 2^18 | 773 | 129 | 6.0|
 
 ### MSM Results
 
+|Input Vecotr Length | WASM (ms) | Native (ms) | Ratio |
+| --- | --- | --- | --- |
+| 2^8 | 478 | 14 | 34.1 |
+| 2^10 | 1627 | 38 | 42.8 |
+| 2^12 | 6191 | 125 | 49.5 |
+| 2^14 | 24243 | 393 | 61.7 |
+
 ### Pairing Results
 
-
-
-
+|Input Vecotr Length | WASM (ms) | Native (ms) | Ratio |
+| --- | --- | --- | --- |
+| 2^2 | 97 | 7 | 13.9 |
+| 2^4 | 368 | 30 | 12.3 |
+| 2^6 | 1479 | 121 | 12.3 |
+| 2^8 | 5916 | 485 | 12.2 |
