@@ -10,8 +10,8 @@ mod tests{
 
     #[bench]
     fn bench_fft_and_ifft(b: &mut Bencher) {
-        let input_domain_dim = 20;
-        let output_domain_dim = 20;
+        let input_domain_dim = 14;
+        let output_domain_dim = 18;
         let (rand_evaluation_domain, output_domain) = generate_random_evaluation(input_domain_dim, output_domain_dim);
 
         let rand_evaluation_domain = black_box(rand_evaluation_domain);

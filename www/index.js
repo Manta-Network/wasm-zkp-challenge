@@ -14,7 +14,7 @@ const perf = Array.from(
     {length: repeat},
     (_, i) => {
         const t0 = performance.now();
-        bench_msm();
+        bench_fft_and_ifft();
         const t1 = performance.now();
         return t1 - t0;
     }

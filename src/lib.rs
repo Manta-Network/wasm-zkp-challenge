@@ -9,8 +9,8 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn bench_fft_and_ifft() {
-    let input_domain_dim = 20;
-    let output_domain_dim = 20;
+    let input_domain_dim = 14;
+    let output_domain_dim = 18;
     let (rand_evaluation_domain, output_domain) = fft::generate_random_evaluation(input_domain_dim, output_domain_dim);
 
     fft::compute_fft_and_ifft(rand_evaluation_domain.clone(), output_domain);
