@@ -5,9 +5,11 @@ mod tests{
     use crate::fft::{generate_random_evaluation, compute_fft_and_ifft};
     use crate::pairing::{generate_pairing_inputs, compute_billinearity};
     use crate::msm::{generate_msm_inputs, compute_msm};
+    use crate::stream_pippenger::ChunkedPippenger;
     use super::*;
+    use ark_bls12_381::G1Affine;
     use test::{Bencher, black_box};
-
+    
     #[bench]
     fn bench_fft_and_ifft(b: &mut Bencher) {
         let input_domain_dim = 14;
@@ -36,8 +38,8 @@ mod tests{
     }
 
     #[bench]
-    fn bench_msm(b: &mut Bencher) {
-        let size = 1<<10;
+    fn bench_pippenger_msm(b: &mut Bencher) {
+        let size = 1<<14;
         let (point_vec, scalar_vec) = generate_msm_inputs(size);
 
         let point_vec = black_box(point_vec);
@@ -45,6 +47,23 @@ mod tests{
         
         b.iter( || {
             compute_msm(point_vec.clone(), scalar_vec.clone());
+        });
+    }
+
+    #[bench]
+    fn bench_strem_pippenger_msm(b: &mut Bencher) {
+        let size = 1<<14;
+        let (point_vec, scalar_vec) = generate_msm_inputs(size);
+
+        let point_vec = black_box(point_vec);
+        let scalar_vec = black_box(scalar_vec);
+        
+        b.iter( || {
+            let mut p = ChunkedPippenger::<G1Affine>::new(1 << 12);
+            for (s, g) in scalar_vec.iter().zip(point_vec.clone()) {
+                p.add(g, s);
+            }
+            let stream_pippenger_msm = p.finalize();
         });
     }
 }
