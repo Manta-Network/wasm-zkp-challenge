@@ -1,6 +1,10 @@
+use std::marker::PhantomData;
+use std::ops::AddAssign;
+
+use ark_ec::short_weierstrass_jacobian::GroupAffine;
 use ark_ff::prelude::*;
 use ark_std::vec::Vec;
-use ark_ec::{AffineCurve, ProjectiveCurve};
+use ark_ec::{AffineCurve, ProjectiveCurve, short_weierstrass_jacobian::GroupProjective};
 
 /// The result of this function is only approximately `ln(a)`
 /// [`Explanation of usage`]
@@ -109,4 +113,105 @@ impl VariableBaseMSM {
                     total
                 })
     }
+
+    /// Independent point addition with the mixed addition algorithm.
+    /// For example, for index i, we computes points[first_index_vec[i]] + points[second_index_vec[i]].
+    pub fn mixed_point_addition<G: AffineCurve>(
+        points: &[G],
+        first_index_vec: &[usize],
+        second_index_vec: &[usize],
+    ) -> Vec<G::Projective> {
+        assert_eq!(first_index_vec.len(), second_index_vec.len());
+
+        // Check out-of-boundary error
+        // Assume no NaN in first_index_vec and second_index_vec
+        let max_idx = first_index_vec.iter().max().unwrap();
+        assert!(*max_idx < points.len());
+        let max_idx = second_index_vec.iter().max().unwrap();
+        assert!(*max_idx < points.len());
+
+        let zero = G::Projective::zero();
+        let mut results = vec![zero; first_index_vec.len()];
+
+        for i in 0..first_index_vec.len() {
+            let first_idx = first_index_vec[i];
+            let second_idx = second_index_vec[i];
+            let mut res = points[first_idx].into_projective();
+            res.add_assign_mixed(&points[second_idx]);
+            results[i] = res;
+        }
+        results
+    }
+
+    // Independent point addition with batch affine optimization.
+    // For index i, we computes points[first_index_vec[i]] + points[second_index_vec[i]].
+    // For detailed comparison against `fn mixed_point_addition(...)`, 
+    //     please check doc at https://hackmd.io/@tazAymRSQCGXTUKkbh1BAg/Sk27liTW9
+    pub fn batch_affine_point_addition<G: AffineCurve>(
+        points: &[G],
+        first_index_vec: &[usize],
+        second_index_vec: &[usize],
+    ) -> Vec<G::Projective> {
+        assert_eq!(first_index_vec.len(), second_index_vec.len());
+
+        // Check out-of-boundary error
+        // Assume no NaN in first_index_vec and second_index_vec
+        let max_idx = first_index_vec.iter().max().unwrap();
+        assert!(*max_idx < points.len());
+        let max_idx = second_index_vec.iter().max().unwrap();
+        assert!(*max_idx < points.len());
+
+        let size = first_index_vec.len();
+
+        // A collection of a_i = x_{i,2} - x_{i,1}
+        let mut a_vec = vec![G::BaseField::zero(); size];
+        let mut d_vec = vec![G::BaseField::one(); size];
+
+        for i in 0..size {
+            let first_idx = first_index_vec[i];
+            let second_idx = second_index_vec[i];
+            a_vec[i] = points[second_idx].x - points[first_idx].x;
+        }
+
+        for i in 1..size {
+            d_vec[i] = d_vec[i-1]*a_vec[i-1];
+        }
+        let s = (d_vec[size-1] * a_vec[size-1]).inverse().unwrap();
+
+        let mut e_vec = vec![G::BaseField::zero(); size];
+        e_vec[size-1] = s;
+        for i in (0..size-1).rev() {
+            e_vec[i] = e_vec[i+1]*a_vec[i+1];
+        }
+
+        let mut r_vec = vec![G::BaseField::zero(); size];
+        let zero = G::Projective::zero();
+        let result = vec![zero; size];
+        for i in 0..size {
+            // r_vec[i] = 1/(x_{i,2} - x_{i,1})
+            r_vec[i] = d_vec[i] * e_vec[i];
+
+            let first_idx = first_index_vec[i];
+            let second_idx = second_index_vec[i];
+            let first_point = points[first_idx];
+            let second_point = points[second_idx];
+
+            let m = (second_point.y - first_point.y) * r_vec[i];
+            let x3 = m*m - first_point.x - second_point.x;
+            let y3 = first_point.x + m * (x3 - first_point.x);
+
+            let output_point = GroupAffine{
+                x: x3,
+                y: y3,
+                infinity: false,
+                _params: PhantomData,
+            };
+
+            result[i] = output_point.into();
+        }
+
+        result
+    }
+
+
 }
