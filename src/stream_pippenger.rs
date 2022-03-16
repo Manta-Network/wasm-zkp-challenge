@@ -7,6 +7,8 @@ use ark_ff::{PrimeField, Zero};
 
 use ark_std::{borrow::Borrow, ops::AddAssign, vec::Vec};
 
+use crate::pippenger_msm::VariableBaseMSM;
+
 /// Struct for the chunked Pippenger algorithm.
 pub struct ChunkedPippenger<G: AffineCurve> {
     pub scalars_buffer: Vec<<G::ScalarField as PrimeField>::BigInt>,
@@ -46,7 +48,7 @@ impl<G: AffineCurve> ChunkedPippenger<G> {
         self.scalars_buffer.push(*scalar.borrow());
         self.bases_buffer.push(*base.borrow());
         if self.scalars_buffer.len() == self.buf_size {
-            self.result.add_assign(msm::VariableBaseMSM::multi_scalar_mul(
+            self.result.add_assign(VariableBaseMSM::multi_scalar_mul(
                 self.bases_buffer.as_slice(),
                 self.scalars_buffer.as_slice(),
             ));
@@ -59,7 +61,7 @@ impl<G: AffineCurve> ChunkedPippenger<G> {
     #[inline(always)]
     pub fn finalize(mut self) -> G::Projective {
         if !self.scalars_buffer.is_empty() {
-            self.result.add_assign(msm::VariableBaseMSM::multi_scalar_mul(
+            self.result.add_assign(VariableBaseMSM::multi_scalar_mul(
                 self.bases_buffer.as_slice(),
                 self.scalars_buffer.as_slice(),
             ));

@@ -1,7 +1,9 @@
-use ark_ec::{msm::VariableBaseMSM, AffineCurve, ProjectiveCurve};
+use ark_ec::{AffineCurve, ProjectiveCurve};
 use ark_ff::{PrimeField, UniformRand, Zero};
 use ark_bls12_381::G1Affine;
 use crate::stream_pippenger::ChunkedPippenger;
+use crate::pippenger_msm::VariableBaseMSM;
+
 
 pub fn generate_msm_inputs(size: usize)
 -> (
@@ -32,7 +34,7 @@ pub fn compute_msm(
 
 #[test]
 fn test() {
-    let size = 1<<10;
+    let size = 1<<14;
     let (point_vec, scalar_vec) = generate_msm_inputs(size);
     let res = compute_msm(point_vec, scalar_vec);
 }
