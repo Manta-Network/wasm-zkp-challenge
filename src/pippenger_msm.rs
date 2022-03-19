@@ -289,7 +289,6 @@ pub fn batch_affine_point_addition_pre_allocate(
         // r_vec[i] = 1/(x_{i,2} - x_{i,1})
         r_vec[i] = d_vec[i] * e_vec[i];
 
-        assert_eq!(r_vec[i], a_vec[i].inverse().unwrap());
         let first_idx = first_index_vec[i];
         let second_idx = second_index_vec[i];
         let first_point = points[first_idx];
