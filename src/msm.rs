@@ -1,8 +1,6 @@
-use ark_ec::{AffineCurve, ProjectiveCurve};
+use ark_ec::{AffineCurve, ProjectiveCurve, msm};
 use ark_ff::{PrimeField, UniformRand, Zero};
 use ark_bls12_381::G1Affine;
-use crate::stream_pippenger::ChunkedPippenger;
-use crate::pippenger_msm::VariableBaseMSM;
 
 
 pub fn generate_msm_inputs(size: usize)
@@ -29,7 +27,7 @@ pub fn compute_msm(
     scalar_vec: Vec<<<G1Affine as AffineCurve>::ScalarField as PrimeField>::BigInt>,
 ) -> <G1Affine as AffineCurve>::Projective
 {
-    VariableBaseMSM::multi_scalar_mul(point_vec.as_slice(), scalar_vec.as_slice())
+    msm::VariableBaseMSM::multi_scalar_mul(point_vec.as_slice(), scalar_vec.as_slice())
 }
 
 #[test]
@@ -37,21 +35,4 @@ fn test() {
     let size = 1<<14;
     let (point_vec, scalar_vec) = generate_msm_inputs(size);
     let res = compute_msm(point_vec, scalar_vec);
-}
-
-#[test]
-fn test_pippenger_correctness() {
-    let size = 1<<12;
-
-    let (point_vec, scalar_vec) = generate_msm_inputs(size);
-
-    let pippenger_msm = compute_msm(point_vec.clone(), scalar_vec.clone());
-
-    let mut p = ChunkedPippenger::<G1Affine>::new(1 << 12);
-    for (s, g) in scalar_vec.iter().zip(point_vec) {
-        p.add(g, s);
-    }
-    let stream_pippenger_msm = p.finalize();
-
-    assert_eq!(pippenger_msm.into_affine(), stream_pippenger_msm.into_affine());
 }

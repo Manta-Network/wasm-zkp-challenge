@@ -1,8 +1,6 @@
 #![feature(test)]
 
 mod bench;
-mod stream_pippenger;
-mod pippenger_msm;
 pub mod fft;
 pub mod msm;
 pub mod pairing;
