@@ -1,5 +1,5 @@
 [package]
-name = "WASM-ZKP-Challenge"
+name = "wasm-zkp-challenge"
 version = "0.1.0"
 edition = "2021"
 
@@ -34,3 +34,22 @@ ark-std = "0.3.0"
 ark-ec = "0.3.0"
 ark-poly-commit = { version = "0.3", default-features = false, optional=true }
 ark-serialize = { version = "0.3.0", optional = true, default-features = false, features = ["derive"] }
+
+[dev-dependencies]
+criterion = "0.3"
+
+[profile.test]
+opt-level = 3
+
+[[bench]]
+name = "bench_fft_and_ifft"
+path="benches/bench_fft_and_ifft.rs"
+harness = false
+
+# [[bench]]
+# name = "bench_pairing"
+# harness = false
+
+# [[bench]]
+# name = "bench_pippenger_msm"
+# harness = false
