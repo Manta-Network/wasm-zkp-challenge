@@ -28,8 +28,7 @@ Please check detailed documents at our [proposal](https://hackmd.io/@tsunrise/rJ
     ./serve.sh
     ```
     You can view the result at `localhost:8080`.
-    Please update [this line](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/www/index.js#L17) to benchmark different test suites.
-    The input vector length could also be updated for [Low-Degree Extension](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/src/lib.rs#L12), [Product of Pairings](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/src/lib.rs#L28), and [Multi-Scalar Multiplication](https://github.com/Manta-Network/wasm-zkp-chanllenge/blob/main/src/lib.rs#L21).
+    Please update [this line](https://github.com/Manta-Network/wasm-zkp-challenge/blob/main/www/index.js#L79-L86) to benchmark different test suites.
 * Native time:
     ```bash
     cargo bench
