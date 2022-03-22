@@ -11,7 +11,7 @@ edition = "2021"
 wasm-opt = false
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "lib"]
 
 [dependencies]
 # wasm dependencies
@@ -46,10 +46,10 @@ name = "bench_fft_and_ifft"
 path="benches/bench_fft_and_ifft.rs"
 harness = false
 
-# [[bench]]
-# name = "bench_pairing"
-# harness = false
+[[bench]]
+name = "bench_pairing"
+harness = false
 
-# [[bench]]
-# name = "bench_pippenger_msm"
-# harness = false
+[[bench]]
+name = "bench_pippenger_msm"
+harness = false

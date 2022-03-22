@@ -1,31 +1,30 @@
-// use wasm_zkp_challenge;
 use wasm_zkp_challenge::fft::{generate_random_evaluation, compute_fft_and_ifft};
-// use wasm_zkp_challenge::pairing::{generate_pairing_inputs, compute_billinearity};
-// use wasm_zkp_challenge::msm::{generate_msm_inputs, compute_msm};
-use ark_ec::{AffineCurve, ProjectiveCurve, short_weierstrass_jacobian::GroupProjective, short_weierstrass_jacobian::GroupAffine, bls12::Bls12Parameters};
-use ark_ff::{prelude::*, Fp384};
-use ark_std::{vec::Vec, UniformRand, rand::Rng};
-use ark_bls12_381::{G1Affine, FqParameters};
+use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 
+fn bench_fft_and_ifft(c: &mut Criterion) {
+    let mut group = c.benchmark_group("bench_fft_and_ifft");
+    for input_domain_dim in [14, 16, 18, 20].iter() {
+        for output_domain_dim in [input_domain_dim+1, input_domain_dim+2, input_domain_dim+3, input_domain_dim+4].iter() {
+            if (*input_domain_dim>14) && (*output_domain_dim>*input_domain_dim+1){
+                continue;
+            }
+            let (rand_evaluation_domain, output_domain) = generate_random_evaluation(*input_domain_dim, *output_domain_dim);
+            let rand_evaluation_domain = black_box(rand_evaluation_domain);
+            let output_domain = black_box(output_domain);
+            let input = (rand_evaluation_domain, output_domain);
 
-use criterion::BenchmarkId;
-use criterion::Criterion;
-use criterion::{criterion_group, criterion_main};
-use std::iter;
-
-use criterion::Throughput;
-
-fn from_elem(c: &mut Criterion) {
-    static KB: usize = 1024;
-
-    let mut group = c.benchmark_group("from_elem");
-    for size in [KB, 2 * KB, 4 * KB, 8 * KB, 16 * KB].iter() {
-        group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
-            b.iter(|| iter::repeat(0u8).take(size).collect::<Vec<_>>());
-        });
+            group.bench_with_input(
+                BenchmarkId::from_parameter(format!("input_domain_size: 2^{}, output_domain_size: 2^{}", input_domain_dim, output_domain_dim)),
+                &input,
+                |b, input| {
+                    b.iter(|| {
+                        compute_fft_and_ifft(input.0.clone(), input.1);
+                    })
+                }
+            );
+        }
     }
-    group.finish();
 }
 
-criterion_group!(benches, from_elem);
+criterion_group!(benches, bench_fft_and_ifft);
 criterion_main!(benches);
