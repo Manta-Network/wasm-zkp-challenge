@@ -18,7 +18,7 @@ pub fn generate_random_evaluation(
     // Generate random vector
     let mut rng = test_rng();
     let degree = 1<<input_domain_dim-1;
-    let mut rand_vec: Vec<Fr> = vec![];
+    let mut rand_vec: Vec<Fr> = Vec::with_capacity(degree);
     for _i in 0..degree {
         rand_vec.push(Fr::rand(&mut rng));
     }

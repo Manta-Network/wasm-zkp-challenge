@@ -11,7 +11,7 @@ use wasm_bindgen::prelude::*;
 pub fn bench_fft_and_ifft(input_domain_dim: usize, output_domain_dim: usize) {
     let (rand_evaluation_domain, output_domain) = fft::generate_random_evaluation(input_domain_dim, output_domain_dim);
 
-    fft::compute_fft_and_ifft(rand_evaluation_domain.clone(), output_domain);
+    fft::compute_fft_and_ifft(rand_evaluation_domain, output_domain);
 }
 
 #[wasm_bindgen]
