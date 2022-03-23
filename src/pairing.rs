@@ -12,8 +12,8 @@ pub fn generate_pairing_inputs(size: usize)
 -> (Vec<G1Projective>, Vec<G2Projective>)
 {
     let mut rng = test_rng();
-    let mut g1_rand_vec = vec![];
-    let mut g2_rand_vec = vec![];
+    let mut g1_rand_vec = Vec::with_capacity(size);
+    let mut g2_rand_vec = Vec::with_capacity(size);
     
     for _i in 0..size {
         let a: G1Projective = rng.gen();
@@ -28,7 +28,7 @@ pub fn generate_pairing_inputs(size: usize)
 pub fn compute_billinearity(g1_vector: Vec<G1Projective>, g2_vector: Vec<G2Projective>) {
     assert!(g1_vector.len() == g2_vector.len(), "Length of g1 vector and g2 vector should be the same");
     let size = g1_vector.len();
-    let mut res_vec = vec![];
+    let mut res_vec = Vec::with_capacity(size);
     for _i in 0..size {
         let res = Bls12_381::pairing(g1_vector[_i], g2_vector[_i]);
         res_vec.push(res);
