@@ -42,14 +42,5 @@ criterion = "0.3"
 opt-level = 3
 
 [[bench]]
-name = "bench_fft_and_ifft"
-path="benches/bench_fft_and_ifft.rs"
-harness = false
-
-[[bench]]
-name = "bench_pairing"
-harness = false
-
-[[bench]]
 name = "bench_pippenger_msm"
 harness = false
