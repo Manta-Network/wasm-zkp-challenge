@@ -1,7 +1,7 @@
 use ark_bls12_381::G1Affine;
 use ark_ec::{AffineCurve, ProjectiveCurve};
 use ark_ff::PrimeField;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 pub mod msm;
 
@@ -14,10 +14,8 @@ pub struct PointVectorInput {
 impl PointVectorInput {
     #[wasm_bindgen(constructor)]
     pub fn new(size: usize) -> Self {
-        let (point_vec, _) = msm::generate_msm_inputs(size);
-
         Self {
-            point_vec,
+            point_vec: msm::generate_msm_inputs::<G1Affine>(size).0,
         }
     }
 }
@@ -31,15 +29,13 @@ pub struct ScalarVectorInput {
 impl ScalarVectorInput {
     #[wasm_bindgen(constructor)]
     pub fn new(size: usize) -> Self {
-        let (_, scalar_vec) = msm::generate_msm_inputs(size);
-
         Self {
-            scalar_vec,
+            scalar_vec: msm::generate_msm_inputs::<G1Affine>(size).1,
         }
     }
 }
 
 #[wasm_bindgen]
-pub fn compute_msm(point_vec: PointVectorInput, scalar_vec: ScalarVectorInput) {
-    msm::compute_msm(point_vec.point_vec, scalar_vec.scalar_vec);
+pub fn compute_msm(point_vec: &PointVectorInput, scalar_vec: &ScalarVectorInput) {
+    let _ = msm::compute_msm::<G1Affine>(&point_vec.point_vec, &scalar_vec.scalar_vec);
 }
