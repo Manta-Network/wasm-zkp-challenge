@@ -28,9 +28,9 @@ impl PointVectorInput {
             let y = point.y;
             let is_infinity = point.infinity;
 
-            let mut x_bytes: Vec<u8> = Vec::with_capacity(384);
+            let mut x_bytes: Vec<u8> = Vec::with_capacity(48);
             x.write(&mut x_bytes).unwrap();
-            let mut y_bytes: Vec<u8> = Vec::with_capacity(384);
+            let mut y_bytes: Vec<u8> = Vec::with_capacity(48);
             y.write(&mut y_bytes).unwrap();
 
             let point = Array::new_with_length(3);
@@ -61,7 +61,7 @@ impl ScalarVectorInput {
     pub fn to_js_array(&self) -> Array {
         let arr = Array::new_with_length(self.scalar_vec.len() as u32);
         for (i, scalar) in (&self.scalar_vec).into_iter().enumerate() {
-            let mut bytes: Vec<u8> = Vec::with_capacity(256);
+            let mut bytes: Vec<u8> = Vec::with_capacity(32);
             scalar.write(&mut bytes).unwrap();
             arr.set(i as u32, Uint8Array::from(bytes.as_slice()).into());
         }
