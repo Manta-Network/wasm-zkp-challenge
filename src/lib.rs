@@ -1,6 +1,7 @@
 use ark_bls12_381::G1Affine;
 use ark_ec::{AffineCurve, ProjectiveCurve};
-use ark_ff::PrimeField;
+use ark_ff::{PrimeField, ToBytes};
+use js_sys::{Array, Uint8Array};
 use wasm_bindgen::prelude::*;
 
 pub mod msm;
@@ -16,9 +17,29 @@ impl PointVectorInput {
     pub fn new(size: usize) -> Self {
         let (point_vec, _) = msm::generate_msm_inputs(size);
 
-        Self {
-            point_vec,
+        Self { point_vec }
+    }
+
+    #[wasm_bindgen(js_name = "toJsArray")]
+    pub fn to_js_array(&self) -> Array {
+        let arr = Array::new_with_length(self.point_vec.len() as u32);
+        for (i, point) in (&self.point_vec).into_iter().enumerate() {
+            let x = point.x;
+            let y = point.y;
+            let is_infinity = point.infinity;
+
+            let mut x_bytes: Vec<u8> = Vec::with_capacity(48);
+            x.write(&mut x_bytes).unwrap();
+            let mut y_bytes: Vec<u8> = Vec::with_capacity(48);
+            y.write(&mut y_bytes).unwrap();
+
+            let point = Array::new_with_length(3);
+            point.set(0, Uint8Array::from(x_bytes.as_slice()).into());
+            point.set(1, Uint8Array::from(y_bytes.as_slice()).into());
+            point.set(2, is_infinity.into());
+            arr.set(i as u32, point.into());
         }
+        arr
     }
 }
 
@@ -33,9 +54,18 @@ impl ScalarVectorInput {
     pub fn new(size: usize) -> Self {
         let (_, scalar_vec) = msm::generate_msm_inputs(size);
 
-        Self {
-            scalar_vec,
+        Self { scalar_vec }
+    }
+
+    #[wasm_bindgen(js_name = "toJsArray")]
+    pub fn to_js_array(&self) -> Array {
+        let arr = Array::new_with_length(self.scalar_vec.len() as u32);
+        for (i, scalar) in (&self.scalar_vec).into_iter().enumerate() {
+            let mut bytes: Vec<u8> = Vec::with_capacity(32);
+            scalar.write(&mut bytes).unwrap();
+            arr.set(i as u32, Uint8Array::from(bytes.as_slice()).into());
         }
+        arr
     }
 }
 

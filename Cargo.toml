@@ -17,6 +17,7 @@ crate-type = ["cdylib", "lib"]
 # wasm dependencies
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["console"]}
+js-sys = "0.3.58"
 
 # crypto dependencies
 rand_chacha = { version = "0.3.1", default-features = false }
