@@ -1,0 +1,8 @@
+{
+    "goog:chromeOptions": {
+        "args": [
+            "disable-timeouts-for-profiling"
+        ]
+    },
+    "timeouts": {"pageLoad": 100000000}
+}
