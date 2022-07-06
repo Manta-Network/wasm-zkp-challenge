@@ -23,14 +23,6 @@ Please check detailed documents at our [proposal](https://hackmd.io/@tsunrise/rJ
     ```bash
     cargo install wasm-pack
     ```
-* `chrome`:
-    ```bash
-    apt install google-chrome-stable
-    ```
-* `chromedriver`:
-    ```bash
-    apt install chromium-chromedriver
-    ```
 
 ## Run the benchmark
 
@@ -58,14 +50,7 @@ Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, 16GB Memory, Ubuntu 22.04 LTS.
 
 |Input Vecotr Length | WASM (ms) | Native (ms) | Ratio |
 | --- | --- | --- | --- |
-| 2^8 | 478 | 14 | 34.1 |
-| 2^10 | 1627 | 38 | 42.8 |
-| 2^12 | 6191 | 125 | 49.5 |
-| 2^14 | 24243 | 393 | 61.7 |
-
-|Input Vecotr Length | WASM (ms) | Native (ms) | Ratio |
-| --- | --- | --- | --- |
-| 2^12 |  | 128 |  |
-| 2^14 |  | 432 |  |
-| 2^16 | 16266 | 1748 | 9.3 |
-| 2^18 | 80949 | 5656 |  |
+| 2^12 | 1474 | 128 | 11.5 |
+| 2^14 | 4934 | 432 | 11.4 |
+| 2^16 | 16579 | 1748 | 9.5 |
+| 2^18 | 52660 | 5656 | 9.3 |
