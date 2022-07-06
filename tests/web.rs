@@ -8,7 +8,7 @@ static REPEAT: usize = 5;
 
 #[wasm_bindgen_test]
 fn benchmark() {
-    for size in (18..20).step_by(2) {
+    for size in (12..20).step_by(2) {
         let point_vec = PointVectorInput::new(2 << size);
         let scalar_vec = ScalarVectorInput::new(2 << size);
         let start_time = instant::Instant::now();
