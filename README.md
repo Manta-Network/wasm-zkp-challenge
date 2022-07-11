@@ -17,7 +17,11 @@ Please check detailed documents at our [proposal](https://hackmd.io/@tsunrise/rJ
 
 ## Dependencies:
 
-* [Rust toolchain](https://www.rust-lang.org/tools/install)
+* [Rust toolchain](https://www.rust-lang.org/tools/install):
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+```
 * [npm](https://www.npmjs.com/get-npm)
 * `wasm-pack` package:
     ```bash
